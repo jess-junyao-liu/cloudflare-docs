@@ -120,6 +120,37 @@ With Sandbox, you can execute Python scripts, run Node.js applications, analyze 
 		```
 	</TabItem>
 
+	<TabItem label="Interactive Terminals">
+		```typescript
+		import { getSandbox } from '@cloudflare/sandbox';
+
+		export { Sandbox } from '@cloudflare/sandbox';
+
+		export default {
+			async fetch(request: Request, env: Env): Promise<Response> {
+				const sandbox = getSandbox(env.Sandbox, 'user-123', {
+					useWebSocket: true
+				});
+
+				// Create an interactive terminal session
+				const pty = await sandbox.pty.create({ cols: 80, rows: 24 });
+
+				// Listen for terminal output
+				pty.onData((data) => {
+					console.log('Terminal output:', data);
+				});
+
+				// Send commands
+				pty.write('python --version\n');
+
+				return Response.json({ ptyId: pty.id });
+			}
+		};
+		```
+
+		Build interactive terminal experiences with full terminal emulation. Learn more: [Interactive Terminals](/sandbox/guides/interactive-terminals/).
+	</TabItem>
+
 	<TabItem label="WebSocket Connections">
 		```typescript
 		import { getSandbox } from '@cloudflare/sandbox';
